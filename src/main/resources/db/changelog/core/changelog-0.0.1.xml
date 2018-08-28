@@ -1,0 +1,151 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="0" author="elgleidson">
+        <tagDatabase tag="0.0"/>
+    </changeSet>
+
+    <changeSet id="1" author="elgleidson">
+    	<createTable tableName="roles">
+    		<column name="id" type="bigint" autoIncrement="${autoIncrement}"/>
+    		<column name="name" type="varchar(100)"/>
+    	</createTable>
+    	<addPrimaryKey tableName="roles" columnNames="id" constraintName="pk_role"/>
+    	<addUniqueConstraint tableName="roles" columnNames="name" constraintName="uq_role_name"/>
+    </changeSet>
+    
+    <changeSet id="2" author="elgleidson">
+    	<createTable tableName="tenant">
+    		<column name="id" type="bigint" autoIncrement="${autoIncrement}"/>
+    		<column name="name" type="varchar(100)"/>
+    		<column name="schema" type="varchar(100)"/>
+    	</createTable>
+    	<addPrimaryKey tableName="tenant" columnNames="id" constraintName="pk_tenant"/>
+    	<addUniqueConstraint tableName="tenant" columnNames="name" constraintName="uq_tenant_name"/>
+    	<addUniqueConstraint tableName="tenant" columnNames="schema" constraintName="uq_tenant_schema"/>
+    </changeSet>
+    
+    <changeSet id="3" author="elgleidson">
+    	<createTable tableName="users">
+    		<column name="id" type="bigint" autoIncrement="${autoIncrement}"/>
+    		<column name="name" type="varchar(100)"/>
+    		<column name="email" type="varchar(100)"/>
+    		<column name="username" type="varchar(100)"/>
+    		<column name="password" type="varchar(100)"/>
+    		<column name="active" type="boolean"/>
+    		<column name="id_tenant" type="bigint"/>
+    	</createTable>
+    	<addPrimaryKey tableName="users" columnNames="id" constraintName="pk_user"/>
+    	<addUniqueConstraint tableName="users" columnNames="username" constraintName="uq_user_username"/>
+    	<addUniqueConstraint tableName="users" columnNames="email" constraintName="uq_user_email"/>
+    </changeSet>
+    
+    <changeSet id="4" author="elgleidson">
+    	<createTable tableName="user_role">
+    		<column name="id_user" type="bigint"/>
+    		<column name="id_role" type="bigint"/>
+    	</createTable>
+    	<addPrimaryKey tableName="user_role" columnNames="id_user,id_role" constraintName="pk_user_role"/>
+    </changeSet>
+    
+    <changeSet id="5" author="elgleidson">
+    	<addForeignKeyConstraint constraintName="fk_user_role_user" 
+    							baseTableName="user_role" 
+    							baseColumnNames="id_user" 
+    							referencedTableName="users" 
+    							referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="6" author="elgleidson">
+    	<addForeignKeyConstraint constraintName="fk_user_role_role" 
+    							baseTableName="user_role" 
+    							baseColumnNames="id_role" 
+    							referencedTableName="roles" 
+    							referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="7" author="elgleidson">
+    	<addForeignKeyConstraint constraintName="fk_user_tenant" 
+    							baseTableName="users" 
+    							baseColumnNames="id_tenant" 
+    							referencedTableName="tenant" 
+    							referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="8" author="elgleidson">
+    	<insert tableName="roles" >
+    		<column name="id">1</column>
+    		<column name="name">ROLE_ADMIN</column>
+    	</insert>
+    	<insert tableName="roles" >
+    		<column name="id">2</column>
+    		<column name="name">ROLE_USER</column>
+    	</insert>
+    </changeSet>
+    
+    <changeSet id="9" author="elgleidson">
+    	<insert tableName="tenant" >
+    		<column name="id">1</column>
+    		<column name="name">tenant_user_1</column>
+    		<column name="schema">user1</column>
+    	</insert>
+    	<insert tableName="tenant" >
+    		<column name="id">2</column>
+    		<column name="name">tenant_user_2</column>
+    		<column name="schema">user2</column>
+    	</insert>
+    </changeSet>
+    
+    <changeSet id="10" author="elgleidson">
+    	<insert tableName="users" >
+    		<column name="id">0</column>
+    		<column name="name">Admin</column>
+    		<column name="email">admin@email.com</column>
+    		<column name="username">admin</column>
+    		<column name="password">$2a$04$B5ZguV5CzzHpYvbnHr9il.N.mwF7roikUTz5Xa36evNfJ3khSAiXe</column>
+    		<column name="active" valueBoolean="true"/>
+    	</insert>
+    	<insert tableName="users" >
+    		<column name="id">1</column>
+    		<column name="name">User 1</column>
+    		<column name="email">user1@email.com</column>
+    		<column name="username">user1</column>
+    		<column name="password">$2a$04$U1FT8qjHLjaFusiCs7Y9FOaUyAssCQkfil6bCknxOgL/WWvK3z6c2</column>
+			<column name="active" valueBoolean="true"/>
+    		<column name="id_tenant">1</column>
+    	</insert>
+    	<insert tableName="users" >
+    		<column name="id">2</column>
+    		<column name="name">User 2</column>
+    		<column name="email">user2@email.com</column>
+    		<column name="username">user2</column>
+    		<column name="password">$2a$04$.ybthso1GKpOjjKBHzKIWeoNGfVY8ZLYWvvsr//I73onEZbq0FVpa</column>
+			<column name="active" valueBoolean="true"/>
+    		<column name="id_tenant">2</column>
+    	</insert>
+    </changeSet>
+    
+    <changeSet id="11" author="elgleidson">
+       	<insert tableName="user_role" >
+    		<column name="id_user">0</column>
+    		<column name="id_role">1</column>
+    	</insert>
+    	<insert tableName="user_role" >
+    		<column name="id_user">0</column>
+    		<column name="id_role">2</column>
+    	</insert>
+    	<insert tableName="user_role" >
+    		<column name="id_user">1</column>
+    		<column name="id_role">2</column>
+    	</insert>
+    	<insert tableName="user_role" >
+    		<column name="id_user">2</column>
+    		<column name="id_role">2</column>
+    	</insert>
+    </changeSet>
+
+</databaseChangeLog>
